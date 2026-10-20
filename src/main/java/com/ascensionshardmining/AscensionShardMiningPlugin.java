@@ -13,12 +13,15 @@ import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.NPC;
 import net.runelite.api.WorldView;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NpcChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -72,11 +75,16 @@ public class AscensionShardMiningPlugin extends Plugin
 	@Inject
 	private AscensionShardMiningOverlay overlay;
 
+	@Inject
+	private Notifier notifier;
+
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<GameObject> activeRocks = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	@Getter(AccessLevel.PACKAGE)
 	private final Set<NPC> sprites = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
+	private WorldPoint targetRockLocation;
 
 	@Override
 	protected void startUp() throws Exception
@@ -108,6 +116,22 @@ public class AscensionShardMiningPlugin extends Plugin
 		overlayManager.remove(overlay);
 		activeRocks.clear();
 		sprites.clear();
+		targetRockLocation = null;
+	}
+
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event)
+	{
+		int id = event.getId();
+		if (ACTIVE_ROCK_IDS.contains(id))
+		{
+			WorldView wv = client.getTopLevelWorldView();
+			if (wv != null)
+			{
+				targetRockLocation = WorldPoint.fromScene(wv, event.getParam0(), event.getParam1(), wv.getPlane());
+				log.debug("Set target rock at {}", targetRockLocation);
+			}
+		}
 	}
 
 	@Subscribe
@@ -129,6 +153,8 @@ public class AscensionShardMiningPlugin extends Plugin
 			activeRocks.removeIf(rock ->
 				rock.getWorldLocation().equals(gameObject.getWorldLocation())
 				&& rock.getPlane() == gameObject.getPlane());
+
+			checkRockDepleted(gameObject.getWorldLocation());
 		}
 	}
 
@@ -142,6 +168,11 @@ public class AscensionShardMiningPlugin extends Plugin
 		}
 
 		activeRocks.remove(gameObject);
+
+		if (ACTIVE_ROCK_IDS.contains(gameObject.getId()))
+		{
+			checkRockDepleted(gameObject.getWorldLocation());
+		}
 	}
 
 	@Subscribe
@@ -152,6 +183,7 @@ public class AscensionShardMiningPlugin extends Plugin
 		{
 			sprites.add(npc);
 			log.debug("Ascension sprite spawned: {}", npc);
+			notifier.notify(config.notifySpriteAppeared(), "A Sprite has appeared!");
 		}
 	}
 
@@ -172,9 +204,11 @@ public class AscensionShardMiningPlugin extends Plugin
 		if (isSprite(npc))
 		{
 			sprites.add(npc);
+
 			if (event.getOld() == null || event.getOld().getId() != SPRITE_ACTIVE_ID)
 			{
-				log.debug("Ascension sprite spawned via change: {}", npc);
+				log.debug("Ascension sprite spawned: {}", npc);
+				notifier.notify(config.notifySpriteAppeared(), "A Sprite has appeared!");
 			}
 		}
 		else
@@ -193,6 +227,17 @@ public class AscensionShardMiningPlugin extends Plugin
 		{
 			activeRocks.clear();
 			sprites.clear();
+			targetRockLocation = null;
+		}
+	}
+
+	private void checkRockDepleted(WorldPoint location)
+	{
+		if (targetRockLocation != null && targetRockLocation.equals(location))
+		{
+			log.debug("Target rock depleted at {}", location);
+			targetRockLocation = null;
+			notifier.notify(config.notifyRockDepleted(), "Your Ascension rock has depleted");
 		}
 	}
 

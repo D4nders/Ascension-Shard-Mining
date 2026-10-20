@@ -6,6 +6,7 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Notification;
 import net.runelite.client.config.Range;
 
 @ConfigGroup("ascension-shard-mining")
@@ -105,5 +106,36 @@ public interface AscensionShardMiningConfig extends Config
 	default int outlineWidth()
 	{
 		return 2;
+	}
+
+	@ConfigSection(
+		name = "Notifications",
+		description = "Options for tray notifications",
+		position = 30
+	)
+	String notificationsSection = "notificationsSection";
+
+	@ConfigItem(
+		keyName = "notifyRockDepleted",
+		name = "Rock depleted",
+		description = "Sends a notification when your Ascension rock has depleted",
+		position = 31,
+		section = notificationsSection
+	)
+	default Notification notifyRockDepleted()
+	{
+		return Notification.OFF;
+	}
+
+	@ConfigItem(
+		keyName = "notifySpriteAppeared",
+		name = "Sprite appeared",
+		description = "Sends a notification when an Ascension sprite appears",
+		position = 33,
+		section = notificationsSection
+	)
+	default Notification notifySpriteAppeared()
+	{
+		return Notification.OFF;
 	}
 }
