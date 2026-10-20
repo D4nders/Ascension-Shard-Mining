@@ -21,6 +21,8 @@ import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NpcChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.api.gameval.NpcID;
+import net.runelite.api.gameval.ObjectID;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -37,27 +39,16 @@ import net.runelite.client.ui.overlay.OverlayManager;
 )
 public class AscensionShardMiningPlugin extends Plugin
 {
-	// Gameval constants are not yet available in net.runelite.api.gameval for Ascension Shard Mining
-	private static final int ASCENSION_ROCK_ACTIVE_1 = 63266;
-	private static final int ASCENSION_ROCK_ACTIVE_2 = 63267;
-	private static final int ASCENSION_ROCK_ACTIVE_3 = 63268;
-
-	private static final int ASCENSION_ROCK_DEPLETED_1 = 63269;
-	private static final int ASCENSION_ROCK_DEPLETED_2 = 63270;
-	private static final int ASCENSION_ROCK_DEPLETED_3 = 63271;
-
-	private static final int SPRITE_ACTIVE_ID = 16691;
-
 	private static final Set<Integer> ACTIVE_ROCK_IDS = Set.of(
-		ASCENSION_ROCK_ACTIVE_1,
-		ASCENSION_ROCK_ACTIVE_2,
-		ASCENSION_ROCK_ACTIVE_3
+		ObjectID.TFA_GATHERING_ROCK_ACTIVE01,
+		ObjectID.TFA_GATHERING_ROCK_ACTIVE02,
+		ObjectID.TFA_GATHERING_ROCK_ACTIVE03
 	);
 
 	private static final Set<Integer> DEPLETED_ROCK_IDS = Set.of(
-		ASCENSION_ROCK_DEPLETED_1,
-		ASCENSION_ROCK_DEPLETED_2,
-		ASCENSION_ROCK_DEPLETED_3
+		ObjectID.TFA_GATHERING_ROCK_INACTIVE01,
+		ObjectID.TFA_GATHERING_ROCK_INACTIVE02,
+		ObjectID.TFA_GATHERING_ROCK_INACTIVE03
 	);
 
 	@Inject
@@ -205,7 +196,7 @@ public class AscensionShardMiningPlugin extends Plugin
 		{
 			sprites.add(npc);
 
-			if (event.getOld() == null || event.getOld().getId() != SPRITE_ACTIVE_ID)
+			if (event.getOld() == null || event.getOld().getId() != NpcID.TFA_GATHERING_SPRITE)
 			{
 				log.debug("Ascension sprite spawned: {}", npc);
 				notifier.notify(config.notifySpriteAppeared(), "A Sprite has appeared!");
@@ -243,7 +234,7 @@ public class AscensionShardMiningPlugin extends Plugin
 
 	private static boolean isSprite(NPC npc)
 	{
-		return npc != null && npc.getId() == SPRITE_ACTIVE_ID;
+		return npc != null && npc.getId() == NpcID.TFA_GATHERING_SPRITE;
 	}
 
 	@Provides
