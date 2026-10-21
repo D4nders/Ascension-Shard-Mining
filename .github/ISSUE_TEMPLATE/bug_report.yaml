@@ -1,0 +1,35 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior in Ascension Shard Mining
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: feature
+    attributes:
+      label: Affected Feature
+      description: Which feature or part of the plugin is affected?
+      options:
+        - Rock Highlighting
+        - Sprite Highlighting
+        - Notifications
+        - Rendering / Style
+        - Other
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Briefly describe what went wrong or what you expected to happen.
+      placeholder: "e.g., Active rock highlight did not appear after rock spawned..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Logs (Optional)
+      description: Drag and drop screenshots or paste relevant RuneLite client logs if available.
+    validations:
+      required: false

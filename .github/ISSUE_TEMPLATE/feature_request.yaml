@@ -1,0 +1,21 @@
+name: 💡 Feature Request
+description: Suggest an improvement, config option, or new feature
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea
+      description: Describe the feature or improvement you would like to see.
+      placeholder: "e.g., Add an option to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional Details (Optional)
+      description: Any extra context, examples, or screenshots.
+    validations:
+      required: false
