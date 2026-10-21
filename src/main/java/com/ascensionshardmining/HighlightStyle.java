@@ -4,5 +4,6 @@ public enum HighlightStyle
 {
 	OUTLINE,
 	HULL,
-	TILE
+	TILE,
+	CLICKBOX
 }

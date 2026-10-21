@@ -86,7 +86,7 @@ public interface AscensionShardMiningConfig extends Config
 	@ConfigItem(
 		keyName = "highlightStyle",
 		name = "Highlight style",
-		description = "Highlight style for rocks and sprites (Outline, Hull, or Tile)",
+		description = "Highlight style for rocks and sprites (Outline, Hull, Tile, or Clickbox)",
 		position = 21,
 		section = renderingSection
 	)
