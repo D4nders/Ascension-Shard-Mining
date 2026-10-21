@@ -134,6 +134,13 @@ public class AscensionShardMiningOverlay extends Overlay
 					OverlayUtil.renderPolygon(graphics, tilePoly, color, stroke);
 				}
 				break;
+			case CLICKBOX:
+				Shape clickbox = object.getClickbox();
+				if (clickbox != null)
+				{
+					OverlayUtil.renderPolygon(graphics, clickbox, color, stroke);
+				}
+				break;
 		}
 	}
 
@@ -144,6 +151,7 @@ public class AscensionShardMiningOverlay extends Overlay
 			case OUTLINE:
 				modelOutlineRenderer.drawOutline(npc, outlineWidth, color, 0);
 				break;
+			case CLICKBOX:
 			case HULL:
 				Shape hull = npc.getConvexHull();
 				if (hull != null)
